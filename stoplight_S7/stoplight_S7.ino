@@ -10,7 +10,8 @@ Add EDT
 #include <ESPAsyncWebServer.h>
 #include <NTPClient.h>
 #include <WiFiUdp.h>
-#include <SPIFFS.h>
+//#include <SPIFFS.h>
+#include <LittleFS.h>
 
 #define WIFI_SSID "EngineeringSubNet"
 #define WIFI_PASS "password"
@@ -276,22 +277,32 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
+  // Start file system
+  if (!LittleFS.begin()) {
+    Serial.println("File system failed to initialize.");
+    return;
+  } else
+    Serial.println("File system initialized.");
+
+/*
   if (!SPIFFS.begin()) {
     Serial.println("Failed to initialize SPIFFS");
     return;
-  }
+  }*/
 
   // Route for root / web page
   server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
     Serial.println("html");
     //request->send(SPIFFS, "/index.html", "text/html");
-    request->send(SPIFFS, "/index.html", String(), false, processor);
+   // request->send(SPIFFS, "/index.html", String(), false, processor);
+   request->send(LittleFS, "/index.html", String(), false, processor);
   });
 
   // Route to load style.css file
   server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest* request) {
     Serial.println("css");
-    request->send(SPIFFS, "/styles.css", "text/css");
+   // request->send(SPIFFS, "/styles.css", "text/css");
+    request->send(LittleFS, "/styles.css", "text/css");
   });
 
   // Load on form submission
@@ -320,7 +331,8 @@ void setup() {
       }
     }
     state = NOSTATE;
-    request->send(SPIFFS, "/index.html", String(), false, processor);
+   // request->send(SPIFFS, "/index.html", String(), false, processor);
+   request->send(LittleFS, "/index.html", String(), false, processor);
   });
 
   //Start server
@@ -332,6 +344,8 @@ void setup() {
   pinMode(RED_LIGHT, OUTPUT);
 
   timeClient.begin();
+
+  //while(1);
 
   // Sets time in minutes for start of school, end of school, and start of clean up.
   // day_str = total_minutes(schedules[sch_str][HOURS], schedules[sch_str][MINUTES]);
@@ -382,7 +396,7 @@ String processor(const String& var) {
 void loop() {
 
 // TESTING A RESET OPTION
-  if (WiFi.status() != WL_CONNECTED) ESP.restart();
+ // if (WiFi.status() != WL_CONNECTED) ESP.restart();
 
   // Get time
   timeClient.update();
@@ -427,7 +441,7 @@ void loop() {
 
   //Serial.printf("%02d:%02d:%02d:%02d:%02d:%s:%02d:%02d\n", hrs, mns, scs, minuteTime, sch_index, stateNames[state], sch_str, sch_end);
 
-  Serial.printf("%02d:%02d:%02d %s %s\n", hrs, mns, scs, stateNames[state]);
+  Serial.printf("%02d:%02d:%02d %s\n", hrs, mns, scs, stateNames[state]);
 
   switch (state) {
     case NOSTATE:
@@ -506,5 +520,5 @@ void loop() {
         sch_index = sch_str;
       }
       break;
-  }
+  }/**/
 }

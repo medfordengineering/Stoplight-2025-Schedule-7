@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Stoplight Schedule Controller</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="styles.css">
+  <meta http-equiv="refresh" content="10">
+</head>
+
+<body>
+  <h1>Stoplight Schedule Controller</h1>
+  <h2>Robotics and Engineering</h2>
+  <h2>Room V105</h2>
+
+  <h3>%SET_SCHEDULE% (%SET_DST%)</h3>
+<h3>%TIME%</h3>
+<h3>%PERIOD%</h3>
+<h3>%STATE%</h3>
+  <br>
+  <div class="form-container">
+    <form action="/" method="POST">
+      <fieldset>
+        <legend>Bell Schedule</legend>
+        <br>
+        <label><input type="radio" name="sch" value="0" %CHECK0% />
+          Regular Schedule</label><br><br>
+
+        <label><input type="radio" name="sch" value="1" %CHECK1% />
+          Early Release</label><br><br>
+
+        <label><input type="radio" name="sch" value="2" %CHECK2% />
+          Advisory Activity</label><br><br>
+
+        <label><input type="radio" name="sch" value="3" %CHECK3% />
+          Extended Advisory</label><br><br>
+
+        <div class="center">
+          <input type="submit" value="Submit">
+        </div>
+      </fieldset>
+    </form>
+  </div>
+  <br> <br>
+
+
+</body>
+
+</html>

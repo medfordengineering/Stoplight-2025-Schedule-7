@@ -18,16 +18,17 @@ Add EDT
 #define HOURS 0
 #define MINUTES 1
 
-#define WARNING_TIME 5
-#define CLEANING_TIME 13
+#define WARNING_TIME 5        // Amount of time set for warning before the bell in minutes
+#define CLEANING_TIME 13      // Amount of time set for afternoon cleaning in minutes
 
-#define GRN_LIGHT 3   // 4 8266
-#define YEL_LIGHT 10  // 15 8266
-#define RED_LIGHT 4   // 5 8266
+#define GRN_LIGHT 3   
+#define YEL_LIGHT 10  
+#define RED_LIGHT 4   
 #define NOT_LIGHT 0
 
-#define MAR 3
-#define NOV 11
+// Day light savings variables
+#define MAR 3       // Begin EDT
+#define NOV 11      // Begin EST
 #define SUN 0
 #define WEEK 7
 #define NOTSET 3
@@ -36,6 +37,7 @@ Add EDT
 #define ON 1
 #define OFF 0
 
+// System states
 #define NOSTATE 0
 #define INCLASS 1
 #define WARNING 2
@@ -46,23 +48,26 @@ Add EDT
 #define PERIOD_RESET 7
 #define BEFORESCHOOL 8
 
-
+// Off set in seconds from GMT to EST and EDT
 #define EST -18000
 #define EDT -14400
 
 #define MIDNIGHT 0
 
-#define RS 0
-#define ER 1
-#define AA 2
-#define EA 3
+#define RS 0      // Regular schedule
+#define ER 1      // Early release
+#define AA 2      // Advisory activity
+#define EA 3      // Extended advisory
 
 //bool dst_state;
 
+// The initial state of savings time is unknown
 uint8_t est_state = NOTSET;
 
+// Default to EST for the inital savings time
 const long utcOffsetInSeconds = EST;
 
+// Should show host name network but this does not work yet
 String hostname = "Stoplight V105";
 
 AsyncWebServer server(80);
@@ -87,7 +92,8 @@ String schedule;
 
 bool newRequest = false;
 
-uint32_t timeThis, timeLast;
+// For testing
+//uint32_t timeThis, timeLast;
 
 uint8_t state = NOSTATE;
 
@@ -114,7 +120,6 @@ uint8_t sch_limits[4][2]{
 };
 
 uint8_t hrs, mns, scs;
-
 
 //Added the 7th period to each bell schedule alongside updating the times for the bell.
 uint8_t schedules[72][2]{
@@ -420,7 +425,9 @@ void loop() {
 
   delay(500);
 
-  Serial.printf("%02d:%02d:%02d:%02d:%02d:%s:%02d:%02d\n", hrs, mns, scs, minuteTime, sch_index, stateNames[state], sch_str, sch_end);
+  //Serial.printf("%02d:%02d:%02d:%02d:%02d:%s:%02d:%02d\n", hrs, mns, scs, minuteTime, sch_index, stateNames[state], sch_str, sch_end);
+
+  Serial.printf("%02d:%02d:%02d %s %s\n", hrs, mns, scs, stateNames[state]);
 
   switch (state) {
     case NOSTATE:

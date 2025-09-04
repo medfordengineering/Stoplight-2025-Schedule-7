@@ -1,0 +1,37 @@
+* {
+  font-family: "Reem Kufi", sans-serif;
+  text-transform: uppercase;
+}
+body {
+  width:100%;
+}
+h1 {
+  font-size: 25px;
+  text-align: center;
+  font-weight: bold;
+}
+h2 {
+  font-size: 20px;
+  text-align: center;
+  font-weight: normal;
+}
+h3 {
+  font-size: 15px;
+  text-align: center;
+  font-weight: bold;
+}
+legend {
+  text-align: center;
+}
+.form-container {
+  display: flex;
+  justify-content: center;
+}
+input[type="submit"] {
+  background-color: transparent;
+  border-radius: 4px;
+}
+.center {
+  display: flex;
+  justify-content: center;
+}

@@ -19,17 +19,22 @@ Add EDT
 #define HOURS 0
 #define MINUTES 1
 
-#define WARNING_TIME 5        // Amount of time set for warning before the bell in minutes
-#define CLEANING_TIME 13      // Amount of time set for afternoon cleaning in minutes
+#define WARNING_TIME 5    // Amount of time set for warning before the bell in minutes
+#define CLEANING_TIME 13  // Amount of time set for afternoon cleaning in minutes
 
-#define GRN_LIGHT 3   
-#define YEL_LIGHT 10  
-#define RED_LIGHT 4   
+#define WARN_BUZZ_DURATION 2000
+#define PASS_BUZZ_DURATION 2000
+#define CLASS_BUZZ_DURATION 2000
+
+#define BUZZER 7
+#define GRN_LIGHT 3
+#define YEL_LIGHT 10
+#define RED_LIGHT 4
 #define NOT_LIGHT 0
 
 // Day light savings variables
-#define MAR 3       // Begin EDT
-#define NOV 11      // Begin EST
+#define MAR 3   // Begin EDT
+#define NOV 11  // Begin EST
 #define SUN 0
 #define WEEK 7
 #define NOTSET 3
@@ -55,10 +60,10 @@ Add EDT
 
 #define MIDNIGHT 0
 
-#define RS 0      // Regular schedule
-#define ER 1      // Early release
-#define AA 2      // Advisory activity
-#define EA 3      // Extended advisory
+#define RS 0  // Regular schedule
+#define ER 1  // Early release
+#define AA 2  // Advisory activity
+#define EA 3  // Extended advisory
 
 //bool dst_state;
 
@@ -112,7 +117,7 @@ uint16_t period_end;
 uint16_t period_wrn;
 uint16_t period_nxt;
 
-//Changed the old limits to the updated one. 
+//Changed the old limits to the updated one.
 uint8_t sch_limits[4][2]{
   { 0, 17 },
   { 18, 33 },
@@ -170,7 +175,7 @@ uint8_t schedules[72][2]{
   { 9, 03 },  // #24: 559
   { 9, 36 },  // #25: 597
   //(PERIOD 4)
-  { 9, 39 },  // #26: 600
+  { 9, 39 },   // #26: 600
   { 10, 12 },  // #27: 638
   //(PERIOD 5)
   { 10, 15 },  // #28: 641
@@ -254,6 +259,12 @@ void turn_on(uint8_t color) {
     digitalWrite(color, ON);
 }
 
+void buzz(uint16_t duration) {
+  digitalWrite(BUZZER, ON);
+  delay(duration);
+  digitalWrite(BuZZER, OFF);
+}
+
 // Converts hours and minutes into total minutes
 uint16_t total_minutes(uint8_t hrs, uint8_t mns) {
   return (hrs * 60) + mns;
@@ -284,7 +295,7 @@ void setup() {
   } else
     Serial.println("File system initialized.");
 
-/*
+  /*
   if (!SPIFFS.begin()) {
     Serial.println("Failed to initialize SPIFFS");
     return;
@@ -294,14 +305,14 @@ void setup() {
   server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
     Serial.println("html");
     //request->send(SPIFFS, "/index.html", "text/html");
-   // request->send(SPIFFS, "/index.html", String(), false, processor);
-   request->send(LittleFS, "/index.html", String(), false, processor);
+    // request->send(SPIFFS, "/index.html", String(), false, processor);
+    request->send(LittleFS, "/index.html", String(), false, processor);
   });
 
   // Route to load style.css file
   server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest* request) {
     Serial.println("css");
-   // request->send(SPIFFS, "/styles.css", "text/css");
+    // request->send(SPIFFS, "/styles.css", "text/css");
     request->send(LittleFS, "/styles.css", "text/css");
   });
 
@@ -331,8 +342,8 @@ void setup() {
       }
     }
     state = NOSTATE;
-   // request->send(SPIFFS, "/index.html", String(), false, processor);
-   request->send(LittleFS, "/index.html", String(), false, processor);
+    // request->send(SPIFFS, "/index.html", String(), false, processor);
+    request->send(LittleFS, "/index.html", String(), false, processor);
   });
 
   //Start server
@@ -342,6 +353,7 @@ void setup() {
   pinMode(GRN_LIGHT, OUTPUT);
   pinMode(YEL_LIGHT, OUTPUT);
   pinMode(RED_LIGHT, OUTPUT);
+  pinMode(BUZZER, OUTPUT);
 
   timeClient.begin();
 
@@ -395,8 +407,8 @@ String processor(const String& var) {
 
 void loop() {
 
-// TESTING A RESET OPTION
-if (WiFi.status() != WL_CONNECTED) ESP.restart();
+  // TESTING A RESET OPTION
+  if (WiFi.status() != WL_CONNECTED) ESP.restart();
 
   // Get time
   timeClient.update();
@@ -477,8 +489,9 @@ if (WiFi.status() != WL_CONNECTED) ESP.restart();
       break;
     case INCLASS:
       if (minuteTime >= period_wrn) {
-        state = WARNING;
         turn_on(YEL_LIGHT);
+        buzz(WARN_BUZZ_DURATION);
+        state = WARNING;
       }
       break;
     case WARNING:
@@ -520,5 +533,5 @@ if (WiFi.status() != WL_CONNECTED) ESP.restart();
         sch_index = sch_str;
       }
       break;
-  }/**/
+  } /**/
 }

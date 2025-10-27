@@ -22,11 +22,11 @@ Add EDT
 #define WARNING_TIME 5    // Amount of time set for warning before the bell in minutes
 #define CLEANING_TIME 13  // Amount of time set for afternoon cleaning in minutes
 
-#define WARN_BUZZ_DURATION 2000
+#define WARN_BUZZ_DURATION 3000
 #define PASS_BUZZ_DURATION 2000
 #define CLASS_BUZZ_DURATION 2000
 
-#define BUZZER 7
+#define BUZZER    11
 #define GRN_LIGHT 3
 #define YEL_LIGHT 10
 #define RED_LIGHT 4
@@ -262,7 +262,7 @@ void turn_on(uint8_t color) {
 void buzz(uint16_t duration) {
   digitalWrite(BUZZER, ON);
   delay(duration);
-  digitalWrite(BuZZER, OFF);
+  digitalWrite(BUZZER, OFF);
 }
 
 // Converts hours and minutes into total minutes
